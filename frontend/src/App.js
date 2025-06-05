@@ -192,11 +192,12 @@ function App() {
             border: 'none',
             cursor: 'pointer',
             margin: '20px',
-            zIndex: 10,
+            zIndex: 9999, // Ensure the button stays on top
             position: 'fixed', // Fixed positioning to keep it on the screen
             bottom: '20px', // Positioned at the bottom
             left: '50%',
             transform: 'translateX(-50%)', // Center it horizontally
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for visibility
           }}
         >
           Get Safest Path
