@@ -10,8 +10,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isPointA, setIsPointA] = useState(true); // Flag to toggle between Point A and Point B
-  const [loading, setLoading] = useState(false); // For showing loading spinner
   const [bothLocationsSelected, setBothLocationsSelected] = useState(false); // Flag for checking if both locations are selected
+  const [showConfirmation, setShowConfirmation] = useState(false); // Flag to show confirmation button for each location
 
   // Handle search query change
   const handleSearchChange = (e) => {
@@ -26,7 +26,6 @@ function App() {
   // Fetch location suggestions
   const getSuggestions = (query) => {
     const apiKey = '578de5eadf084b499371a820e962ace9'; // Replace with your OpenCage API key
-    setLoading(true);
     fetch(`https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`)
       .then((response) => response.json())
       .then((data) => {
@@ -36,8 +35,7 @@ function App() {
       })
       .catch((error) => {
         console.error(error);
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   // Handle search selection
@@ -49,17 +47,16 @@ function App() {
     }
     setSearchQuery('');
     setSuggestions([]);
-    // Set the flag to true once both locations are selected
-    if (positionA && positionB) setBothLocationsSelected(true);
+    setShowConfirmation(true); // Show confirmation button after selecting location
   };
 
-  // Handle the search logic for setting location
-  const handleSearch = () => {
-    if (suggestions.length > 0) {
-      const { lat, lng } = suggestions[0].geometry;
-      handleSuggestionClick(lat, lng);
+  // Confirm the location (either start or destination)
+  const handleConfirmation = () => {
+    setShowConfirmation(false); // Hide confirmation button after confirming
+    if (isPointA) {
+      setIsPointA(false); // Move to destination point after confirming start location
     } else {
-      alert('No suggestions found for this location');
+      setBothLocationsSelected(true); // Both points are selected, enable button
     }
   };
 
@@ -103,50 +100,36 @@ function App() {
 
   return (
     <div className="App">
-      {/* Search Box for both Point A and Point B */}
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder={`Search for ${isPointA ? 'Start' : 'Destination'} Location`}
-          value={searchQuery}
-          onChange={handleSearchChange}
-          style={{
-            padding: '10px',
-            margin: '20px',
-            width: '300px',
-            fontSize: '16px',
-            borderRadius: '4px',
-            border: '1px solid #ccc',
-            zIndex: 10, // Ensure search box stays above the map
-          }}
-        />
-        <button
-          onClick={() => setIsPointA(!isPointA)}
-          style={{
-            padding: '10px 15px',
-            fontSize: '16px',
-            borderRadius: '4px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            cursor: 'pointer',
-            marginLeft: '10px',
-            zIndex: 10, // Ensure button stays above the map
-          }}
-        >
-          {isPointA ? 'Set Start Location' : 'Set Destination'}
-        </button>
+      <div className="flex justify-center p-6">
+        {/* Search Box for both Point A and Point B */}
+        <div className="w-96">
+          <input
+            type="text"
+            placeholder={`Search for ${isPointA ? 'Start' : 'Destination'} Location`}
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full p-3 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {/* Confirmation Button */}
+          {showConfirmation && (
+            <button
+              onClick={handleConfirmation}
+              className="mt-3 w-full p-2 bg-green-500 text-white rounded-md hover:bg-green-400"
+            >
+              Confirm {isPointA ? 'Start' : 'Destination'} Location
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Suggestions List */}
       {suggestions.length > 0 && (
-        <div className="suggestions-list" style={{ padding: '10px', maxHeight: '200px', overflowY: 'auto' }}>
+        <div className="w-96 mx-auto mt-2 bg-white shadow-lg rounded-md">
           {suggestions.map((suggestion, index) => (
             <div
               key={index}
-              className="suggestion-item"
               onClick={() => handleSuggestionClick(suggestion.geometry.lat, suggestion.geometry.lng)}
-              style={{ padding: '8px', cursor: 'pointer', borderBottom: '1px solid #ccc' }}
+              className="p-3 cursor-pointer hover:bg-gray-200"
             >
               {suggestion.formatted}
             </div>
@@ -165,12 +148,9 @@ function App() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url='https://tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
-        {/* Marker for Point A */}
         <Marker position={positionA}>
           <Popup>Starting Location (Point A)</Popup>
         </Marker>
-
-        {/* Marker for Point B */}
         <Marker position={positionB}>
           <Popup>Destination (Point B)</Popup>
         </Marker>
@@ -183,22 +163,7 @@ function App() {
       {bothLocationsSelected && (
         <button
           onClick={handleGetSafestPath}
-          style={{
-            padding: '15px 20px',
-            fontSize: '16px',
-            borderRadius: '4px',
-            backgroundColor: '#007BFF',
-            color: 'white',
-            border: 'none',
-            cursor: 'pointer',
-            margin: '20px',
-            zIndex: 9999, // Ensure the button stays on top
-            position: 'fixed', // Fixed positioning to keep it on the screen
-            bottom: '20px', // Positioned at the bottom
-            left: '50%',
-            transform: 'translateX(-50%)', // Center it horizontally
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for visibility
-          }}
+          className="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 focus:outline-none"
         >
           Get Safest Path
         </button>
