@@ -99,22 +99,23 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <div className="flex justify-center p-6">
+    <div className="App bg-gray-50 min-h-screen flex flex-col justify-between">
+      {/* Container for Search Box */}
+      <div className="flex justify-center p-8">
         {/* Search Box for both Point A and Point B */}
-        <div className="w-96">
+        <div className="w-96 bg-white shadow-xl rounded-lg p-4 border border-gray-300">
           <input
             type="text"
-            placeholder={`Search for ${isPointA ? 'Start' : 'Destination'} Location`}
+            placeholder={`Enter ${isPointA ? 'Start' : 'Destination'} Location`}
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full p-3 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition ease-in-out"
           />
           {/* Confirmation Button */}
           {showConfirmation && (
             <button
               onClick={handleConfirmation}
-              className="mt-3 w-full p-2 bg-green-500 text-white rounded-md hover:bg-green-400"
+              className="mt-4 w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-400 transition"
             >
               Confirm {isPointA ? 'Start' : 'Destination'} Location
             </button>
@@ -163,7 +164,7 @@ function App() {
       {bothLocationsSelected && (
         <button
           onClick={handleGetSafestPath}
-          className="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 focus:outline-none"
+          className="fixed bottom-10 left-1/2 transform -translate-x-1/2 px-8 py-4 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 focus:outline-none transition"
         >
           Get Safest Path
         </button>
