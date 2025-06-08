@@ -25,7 +25,7 @@ function App() {
 
   // Fetch location suggestions
   const getSuggestions = (query) => {
-    const apiKey = '578de5eadf084b499371a820e962ace9'; // Replace with your OpenCage API key
+    const apiKey = process.env.REACT_APP_OPENCAGE_API_KEY; // Replace with your OpenCage API key // api_key: 578de5eadf084b499371a820e962ace9
     fetch(`https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`)
       .then((response) => response.json())
       .then((data) => {
