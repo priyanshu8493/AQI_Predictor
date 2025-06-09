@@ -94,7 +94,9 @@ function App() {
       console.log('Safest path result:', result);
       // Handle the result (e.g., update the route on the map or show the result)
     } catch (error) {
+
       console.error('Error fetching safest path:', error);
+      
     }
   };
 
